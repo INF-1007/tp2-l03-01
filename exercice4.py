@@ -69,12 +69,19 @@ def initialiser_salle(nb_rangees, nb_colonnes, positions_equipements):
 
     # TODO 1 :
     # Créer une grille nb_rangees × nb_colonnes remplie de 'X'
+    for i in range(nb_rangees):
+        grille = ['X'] * nb_colonnes
+        salle.append(grille)
 
     # TODO 2 :
     # Pour chaque equipement (voir sa position) :
     #   - si capacite == 2, X -> 'D2'
     #   - si capacite == 4, X -> 'D4'
-
+    for rangee, colonne, capacite in positions_equipements:
+        if capacite == 2:
+            salle[rangee][colonne] = 'D2'
+        if capacite == 4:
+            salle[rangee][colonne] = 'D4'
     return salle
 
 # -------------------------------------------------------------------
@@ -101,11 +108,19 @@ def affecter_equipement(salle, position):
     """
 
     # TODO : Faire une copie de la salle et la nommer "nouvelle"
-
+    nouvelle = []
+    for ligne in salle:
+        copie_ligne = ligne.copy()
+        nouvelle.append(copie_ligne)
     # TODO :
     # Pour la position donnée :
     #      si nouvelle[r][c] == 'D2' -> 'U2'
     #      si nouvelle[r][c] == 'D4' -> 'U4'
+    rangee, colonne = position
+    if nouvelle[rangee][colonne] == 'D2':
+        nouvelle[rangee][colonne] = 'U2'
+    if nouvelle[rangee][colonne] == 'D4':
+        nouvelle[rangee][colonne] = 'U4'
 
     return nouvelle
 
@@ -135,13 +150,25 @@ def calculer_score_equipement(position, capacite, taille_equipe, nb_colonnes):
     Returns:
         int: score ou -1
     """
+    rangee, colonne = position
     score = 0
 
     # TODO 1 : gérer le cas équipement trop petit
+    if capacite < taille_equipe:
+        return -1
     # TODO 2 : score de base
+    score = 100
     # TODO 3 : pénalité gaspillage
+    places_vides = capacite - taille_equipe
+    penalite = -10 * places_vides
+    score -= penalite
     # TODO 4 : bonus accès rapide
+    if colonne == 0 or colonne == nb_colonnes - 1:
+        score += 20
+
     # TODO 5 : bonus supervision
+    if rangee < 3:
+        score += 5
 
     return score
 
@@ -169,14 +196,23 @@ def trouver_meilleur_equipement(salle, taille_equipe):
     - En cas d’égalité, conserver le premier rencontré
     """
     meilleur = None
-
+    score_maximal = None
     # TODO :
     # Parcourir la grille
     #   - si case == 'D2' ou 'D4'
     #       extraire capacite depuis la chaîne
     #       calculer le score
     #       comparer au meilleur
-
+    for rangee in range(len(salle)):
+        for colonne in range(nb_colonnes):
+            case = salle[rangee][colonne]
+            if case == 'D2' or case == 'D4':
+                capacite = int(case[1])
+                score = calculer_score_equipement((rangee, colonne), capacite, taille_equipe, nb_colonnes)
+                if score != -1:
+                    if meilleur is None or score > score_maximal:
+                        meilleur = ((rangee, colonne), capacite)
+                        score_maximal = score
     return meilleur
 
 
@@ -208,10 +244,41 @@ def generer_rapport_etat(salle):
         'maintenance_4': 0,
         'taux_indisponibilite': 0.0
     }
-
+    total_equipements = 0
+    indisponibles = 0
     # TODO 1 : parcourir la grille et compter chaque type
+    for ligne in salle:
+        for case in ligne:
+            if case == 'D2':
+                rapport['disponibles_2'] += 1
+                total_equipements += 1  
+            elif case == 'D4':
+                rapport['disponibles_4'] += 1
+                total_equipements += 1
+            elif case == 'U2':
+                rapport['utilises_2'] += 1
+                total_equipements += 1
+                indisponibles += 1
+            elif case == 'U4':
+                rapport['utilises_4'] += 1
+                total_equipements += 1
+                indisponibles += 1
+            elif case == 'M2':
+                rapport['maintenance_2'] += 1
+                total_equipements += 1
+                indisponibles += 1
+            elif case == 'M4':
+                rapport['maintenance_4'] += 1
+                total_equipements += 1
+                indisponibles += 1
+            else:
+                pass
     # TODO 2 : calculer le taux (gérer division par zéro)
-
+    if total_equipements == 0:
+        rapport['taux_indisponibilite'] = 0.0
+    else:
+        rapport['taux_indisponibilite'] = indisponibles / total_equipements
+        
     return rapport
 
 # -------------------------------------------------------------------
