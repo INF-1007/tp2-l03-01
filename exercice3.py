@@ -24,7 +24,14 @@ Structure des données
 - Vous devez éviter les KeyError en utilisant dict.get().
 - Ne modifiez pas directement les dictionnaires si la fonction demande une copie.
 """
+ressources = { 'oxygene': 120, 'eau': 300, 'energie': 500 }
 
+besoin = { 'oxygene': 5, 'eau': 12 }
+
+consommations ={
+        'EVA': {'oxygene': 8, 'energie': 15},
+        'Hydroponie': {'eau': 20, 'energie': 10}
+}   
 # Coûts unitaires (utilisés pour optimiser le réapprovisionnement)
 COUTS_UNITAIRES = {
     'oxygene': 2.5,
@@ -58,7 +65,11 @@ def verifier_ressources(ressources, besoin):
     #   - si stock actuel < quantite requise :
     #         peut_faire = False
     #         mettre à jour la liste "manquantes"
-
+    for ressource, qte_requise in besoin.items():
+        stock = ressources.get(ressource, 0)
+        if stock < qte_requise:
+            peut_faire = False
+            manquantes.append(ressource)
     return peut_faire, manquantes
 
 
@@ -88,7 +99,10 @@ def mettre_a_jour_ressources(ressources, besoin, cycles=1):
     #   - calculer la consommation
     #   - mettre à jour le dictionnaire "nouvelles"
     # (On suppose que les données fournies sont cohérentes; pas besoin de borner à 0)
-
+    for ressource, conso_par_cycle in besoin.items():
+        conso_totale = conso_par_cycle * cycles
+        stock_actuel = nouvelles.get(ressource, 0)  
+        nouvelles[ressource] = stock_actuel - conso_totale
     return nouvelles
 
 
@@ -122,7 +136,10 @@ def generer_alertes_ressources(ressources, seuil=50):
     #   - si stock < seuil :
     #         calculer a_commander
     #         mettre à jour alertes
-
+    for ressource, stock in ressources.items():
+        if stock < seuil:
+            a_commander = niveau_cible - stock
+            alertes[ressource] = (stock, a_commander)
     return alertes
 
 
@@ -155,6 +172,21 @@ def calculer_cycles_possibles(ressources, consommations):
     #   - une ressource est considérée valide si conso > 0
     #   - si aucune ressource valide (toutes conso==0), décider nb_cycles=0 
     #   - mettre à jour "possibles"
+    for activite, conso_actuelle in consommations.items():
+        nb_cycles = None
+        conso_val = False
+
+        for ressource, conso_cycle in conso_actuelle.items():
+            if conso_cycle > 0:
+                conso_val = True
+                stock = ressources.get(ressource, 0)
+                cycles = stock // conso_cycle 
+                if nb_cycles is None or cycles < nb_cycles:
+                    nb_cycles = cycles
+        if not conso_val:
+            possibles[activite] = 0
+        else:
+            possibles[activite] = nb_cycles           
 
     return possibles
 
@@ -190,10 +222,34 @@ Returns:
     achats = {}
 
     # TODO 1 : Calculer les manques dans un dict manques = {}
+    manques = {}
+    for ressource, besoin_total in besoins_prevus.items():
+        stock = ressources.get(ressource, 0)
+        manque = besoin_total - stock
+        if manque > 0:
+            manques[ressource] = manque
+    priorites = list(manques.items())
     # TODO 2 : Trier les manques par ordre décroissant (utiliser la fonction sorted())
+    def cle_tri(element):
+        return element[1]
+
+    priorites = sorted(manques.items(), key=cle_tri, reverse=True)
     # TODO 3 : Parcourir les ressources par priorité :
     #          - calculer la quantite max achetable
     #          - acheter la quantite requise et soustraire du budget
+    for ressource, manque in priorites:
+
+        cout_unitaire = COUTS_UNITAIRES.get(ressource, None)
+        if cout_unitaire is None or cout_unitaire <= 0:
+            continue
+        qte_max = int(budget // cout_unitaire)
+        if qte_max <= 0:
+            break
+
+        qte_achetee = min(manque, qte_max)
+
+        achats[ressource] = qte_achetee
+        budget -= qte_achetee * cout_unitaire
 
     return achats
 
@@ -214,3 +270,4 @@ if __name__ == "__main__":
 
     besoins_prevus = {'oxygene': 300, 'eau': 500, 'energie': 650}
     print("Achats :", optimiser_reapprovisionnement(ressources_test, besoins_prevus, budget=200))
+    
