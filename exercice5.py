@@ -53,13 +53,36 @@ def analyser_rapport(texte, mots_cles):
     mots_trouves = []
 
     # TODO 1 : normaliser texte (minuscules)
+    texte = texte.lower()
+
     # TODO 2 : découper en mots. Attention aussi à enlever la ponctuation basique aux extrémités (utiliser la fonction strip())S.
+    mots = texte.split()
+    new_mots= []
+    for ponctuation in mots:
+        phrase = ponctuation.strip(".,;:!?()[]\"'")
+        if phrase != "":
+            new_mots.append(phrase)
     # TODO 3 : pour chaque mot-clé :
+    for mot_cle, valeur in mots_cles.items():
+        occurence = 0
+        for mot in new_mots:
+            if mot == mot_cle:
+                occurence += 1
+
+        if occurence > 0:
+            score += occurence * valeur
+            if mot_cle not in  mots_trouves:
+                mots_trouves.append(mot_cle)
+    
+
     #    - mettre à jour le score
     #    - si occurrences > 0 : ajouter le mot à mots_trouves (sans doublons)
     # TODO 4 : borner score entre 0 et 10 (min/max)
+    if score < 0:
+        score = 0
+    if score > 10:
+        score = 10
     # TODO 5 : retourner (score, mots_trouves)
-
     return score, mots_trouves
 
 
@@ -92,7 +115,15 @@ def categoriser_rapports(rapports, mots_cles):
     # Pour chaque texte :
     #   - faire une analyse du rapport pour en tirer le score
     #   - mettre à jour "categories"
+    for texte in rapports:
+        score, _ = analyser_rapport(texte, mots_cles)
 
+        if score >= 7:
+            categories['positifs'].append((texte, score))
+        if score <= 3:
+            categories['negatifs'].append((texte, score))
+        elif score <= 6 and score >= 4:
+            categories['neutres'].append((texte, score))
     return categories
 
 
@@ -114,14 +145,33 @@ def identifier_problemes(rapports_negatifs, mots_cles_negatifs):
     problemes = {}
 
     # TODO 1 : initialiser problemes avec 0 pour chaque mot négatif
+    for mot in mots_cles_negatifs:
+        problemes[mot] = 0
     # TODO 2 : parcourir les rapports négatifs :
+
     #   - si l’élément est un tuple, récupérer texte = element[0]
     #   - analyser le texte (minuscules + split)
     #   - compter les occurrences de chaque mot_negatif
     #   - incrémenter problemes[mot]
+    for element in rapports_negatifs:
+        if isinstance(element, tuple):
+            texte = element[0]
+        else:
+            texte = element
+        texte = texte.lower()
+        mots = texte.split()
 
+        suite_mots = []
+        for terme in mots:
+            phrase = mot.strip(".,;:!?()[]\'")
+            if phrase != "":
+                suite_mots.append(phrase)
+
+        for mot_negatif in mots_cles_negatifs:
+            for mot in suite_mots:
+                if mot == mot_negatif:
+                    problemes[mot_negatif] += 1
     return problemes
-
 
 # -------------------------------------------------------------
 # 4) Générer un rapport global
@@ -152,8 +202,41 @@ def generer_rapport_global(categories, problemes):
     }
 
     # TODO 1 : récupérer tous les scores et calculer la moyenne (gérer le cas avec 0 rapports)
-    # TODO 2 : trouver les 3 problèmes les plus fréquents sans utiliser sorted(), un tri simple type “sélection des max” est suffisant.)
+    rapport['nb_positifs'] = len(categories.get('positifs', []))
+    rapport['nb_neutres'] = len(categories.get('neutres', []))
+    rapport['nb_negatifs'] = len(categories.get('negatifs', []))
 
+    scores = []
+    for categorie in ['positifs', 'neutres', 'negatifs']:
+        for texte, score in categories.get(categorie):
+            scores.append(score)
+
+    if len(scores) == 0:
+        rapport['score_moyen'] = 0.0
+    else:
+        rapport['score_moyen'] = sum(scores) / len(scores)
+
+    # TODO 2 : trouver les 3 problèmes les plus fréquents sans utiliser sorted(), un tri simple type “sélection des max” est suffisant.)
+    problemes_frequent_3 = []
+    copie = problemes.copy()
+
+    for _ in range(3):
+        max_mot = None
+        max_val = None
+
+        for mot, val in copie.items():
+            if max_mot is None or val > max_val:
+                max_mot = mot
+                max_val = val
+
+        # si dictionnaire vide ou tout à 0, on peut arrêter
+        if max_mot is None:
+            break
+
+        problemes_frequent_3.append(max_mot)
+        del copie[max_mot]  # enlever pour trouver le prochain
+
+    rapport['top_problemes'] = problemes_frequent_3
     return rapport
 
 
@@ -185,8 +268,22 @@ def calculer_tendance(historique_scores):
     # - Gérer les cas vides / 1 élément
     # - Couper en deux moitiés
     # - Comparer les moyennes
+    if len(historique_scores) <= 1:
+        return 'stable'
 
+    milieu = len(historique_scores) // 2
+    premiere = historique_scores[:milieu]
+    seconde = historique_scores[milieu:]
 
+    moy1 = sum(premiere) / len(premiere)
+    moy2 = sum(seconde) / len(seconde)
+
+    if moy2 > moy1:
+        return 'amelioration'
+    elif moy2 < moy1:
+        return 'degradation'
+    else:
+        return 'stable'
 # -------------------------------------------------------------
 # TESTS main
 # -------------------------------------------------------------
