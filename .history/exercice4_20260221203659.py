@@ -132,6 +132,7 @@ def affecter_equipement(salle, position):
 # 3) Calcul du score d'un equipement
 # -------------------------------------------------------------------
 
+
 def calculer_score_equipement(position, capacite, taille_equipe, nb_colonnes):
     """
     Calcule un score pour un équipement.
@@ -175,6 +176,7 @@ def calculer_score_equipement(position, capacite, taille_equipe, nb_colonnes):
 
     return score
 
+
 # -------------------------------------------------------------------
 # 4) Recherche du meilleur equipement
 # -------------------------------------------------------------------
@@ -210,7 +212,7 @@ def trouver_meilleur_equipement(salle, taille_equipe):
         nb_cols = len(salle[0])
         for colonne in range(nb_cols):
             case = salle[rangee][colonne]
-            if case == 'D2' or case == 'D4':
+            if case == "D2" or case == "D4":
                 capacite = int(case[1])
                 score = calculer_score_equipement(
                     (rangee, colonne), capacite, taille_equipe, nb_cols
@@ -243,50 +245,51 @@ def generer_rapport_etat(salle):
         dict
     """
     rapport = {
-        'disponibles_2': 0,
-        'disponibles_4': 0,
-        'utilises_2': 0,
-        'utilises_4': 0,
-        'maintenance_2': 0,
-        'maintenance_4': 0,
-        'taux_indisponibilite': 0.0
+        "disponibles_2": 0,
+        "disponibles_4": 0,
+        "utilises_2": 0,
+        "utilises_4": 0,
+        "maintenance_2": 0,
+        "maintenance_4": 0,
+        "taux_indisponibilite": 0.0,
     }
     total_equipements = 0
     indisponibles = 0
     # TODO 1 : parcourir la grille et compter chaque type
     for ligne in salle:
         for case in ligne:
-            if case == 'D2':
-                rapport['disponibles_2'] += 1
+            if case == "D2":
+                rapport["disponibles_2"] += 1
                 total_equipements += 1
-            elif case == 'D4':
-                rapport['disponibles_4'] += 1
+            elif case == "D4":
+                rapport["disponibles_4"] += 1
                 total_equipements += 1
-            elif case == 'U2':
-                rapport['utilises_2'] += 1
-                total_equipements += 1
-                indisponibles += 1
-            elif case == 'U4':
-                rapport['utilises_4'] += 1
+            elif case == "U2":
+                rapport["utilises_2"] += 1
                 total_equipements += 1
                 indisponibles += 1
-            elif case == 'M2':
-                rapport['maintenance_2'] += 1
+            elif case == "U4":
+                rapport["utilises_4"] += 1
                 total_equipements += 1
                 indisponibles += 1
-            elif case == 'M4':
-                rapport['maintenance_4'] += 1
+            elif case == "M2":
+                rapport["maintenance_2"] += 1
+                total_equipements += 1
+                indisponibles += 1
+            elif case == "M4":
+                rapport["maintenance_4"] += 1
                 total_equipements += 1
                 indisponibles += 1
             else:
                 pass
     # TODO 2 : calculer le taux (gérer division par zéro)
     if total_equipements == 0:
-        rapport['taux_indisponibilite'] = 0.0
+        rapport["taux_indisponibilite"] = 0.0
     else:
-        rapport['taux_indisponibilite'] = indisponibles / total_equipements
+        rapport["taux_indisponibilite"] = indisponibles / total_equipements
 
     return rapport
+
 
 # -------------------------------------------------------------------
 # TESTS main
@@ -368,11 +371,11 @@ if __name__ == "__main__":
 
     print("\n=== Ajout manuel de maintenances (pour tester le rapport) ===")
     # On force quelques maintenances sur des équipements encore disponibles si possible
-    for (r, c) in [(0, 5), (5, 3), (7, 7)]:
-        if salle[r][c] == 'D2':
-            salle[r][c] = 'M2'
-        elif salle[r][c] == 'D4':
-            salle[r][c] = 'M4'
+    for r, c in [(0, 5), (5, 3), (7, 7)]:
+        if salle[r][c] == "D2":
+            salle[r][c] = "M2"
+        elif salle[r][c] == "D4":
+            salle[r][c] = "M4"
 
     afficher_salle(salle)
 
@@ -400,9 +403,6 @@ if __name__ == "__main__":
     print(rapport)
 
     print("\n=== Test sur mini-grille (cas simple) ===")
-    mini = [
-        ['D2', 'U2', 'M4', 'X'],
-        ['X',  'D4', 'X',  'U4']
-    ]
+    mini = [["D2", "U2", "M4", "X"], ["X", "D4", "X", "U4"]]
     afficher_salle(mini)
     print("Rapport mini :", generer_rapport_etat(mini))

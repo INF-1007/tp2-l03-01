@@ -30,7 +30,6 @@ Règles générales :
 # 1) Analyser un rapport
 # -------------------------------------------------------------
 
-
 def analyser_rapport(texte, mots_cles):
     """
     Calcule le score d’un rapport et extrait les mots-clés détectés.
@@ -58,7 +57,7 @@ def analyser_rapport(texte, mots_cles):
 
     # TODO 2 : découper en mots. Attention aussi à enlever la ponctuation basique aux extrémités (utiliser la fonction strip())S.
     mots = texte.split()
-    new_mots = []
+    new_mots= []
     for ponctuation in mots:
         phrase = ponctuation.strip(".,;:!?()[]\"'")
         if phrase != "":
@@ -72,8 +71,9 @@ def analyser_rapport(texte, mots_cles):
 
         if occurence > 0:
             score += occurence * valeur
-            if mot_cle not in mots_trouves:
+            if mot_cle not in  mots_trouves:
                 mots_trouves.append(mot_cle)
+    
 
     #    - mettre à jour le score
     #    - si occurrences > 0 : ajouter le mot à mots_trouves (sans doublons)
@@ -89,7 +89,6 @@ def analyser_rapport(texte, mots_cles):
 # -------------------------------------------------------------
 # 2) Catégoriser une liste de rapports
 # -------------------------------------------------------------
-
 
 def categoriser_rapports(rapports, mots_cles):
     """
@@ -110,7 +109,7 @@ def categoriser_rapports(rapports, mots_cles):
             'negatifs': [(texte, score), ...]
         }
     """
-    categories = {"positifs": [], "neutres": [], "negatifs": []}
+    categories = {'positifs': [], 'neutres': [], 'negatifs': []}
 
     # TODO :
     # Pour chaque texte :
@@ -120,18 +119,17 @@ def categoriser_rapports(rapports, mots_cles):
         score, _ = analyser_rapport(texte, mots_cles)
 
         if score >= 7:
-            categories["positifs"].append((texte, score))
+            categories['positifs'].append((texte, score))
         if score <= 3:
-            categories["negatifs"].append((texte, score))
+            categories['negatifs'].append((texte, score))
         elif score <= 6 and score >= 4:
-            categories["neutres"].append((texte, score))
+            categories['neutres'].append((texte, score))
     return categories
 
 
 # -------------------------------------------------------------
 # 3) Identifier les problèmes récurrents dans les rapports négatifs
 # -------------------------------------------------------------
-
 
 def identifier_problemes(rapports_negatifs, mots_cles_negatifs):
     """
@@ -165,7 +163,7 @@ def identifier_problemes(rapports_negatifs, mots_cles_negatifs):
 
         suite_mots = []
         for terme in mots:
-            phrase = terme.strip(".,;:!?()[]'")
+            phrase = mot.strip(".,;:!?()[]\'")
             if phrase != "":
                 suite_mots.append(phrase)
 
@@ -175,11 +173,9 @@ def identifier_problemes(rapports_negatifs, mots_cles_negatifs):
                     problemes[mot_negatif] += 1
     return problemes
 
-
 # -------------------------------------------------------------
 # 4) Générer un rapport global
 # -------------------------------------------------------------
-
 
 def generer_rapport_global(categories, problemes):
     """
@@ -198,17 +194,17 @@ def generer_rapport_global(categories, problemes):
         dict
     """
     rapport = {
-        "nb_positifs": 0,
-        "nb_neutres": 0,
-        "nb_negatifs": 0,
-        "score_moyen": 0.0,
-        "top_problemes": [],
+        'nb_positifs': 0,
+        'nb_neutres': 0,
+        'nb_negatifs': 0,
+        'score_moyen': 0.0,
+        'top_problemes': []
     }
 
     # TODO 1 : récupérer tous les scores et calculer la moyenne (gérer le cas avec 0 rapports)
-    rapport["nb_positifs"] = len(categories.get("positifs", []))
-    rapport["nb_neutres"] = len(categories.get("neutres", []))
-    rapport["nb_negatifs"] = len(categories.get("negatifs", []))
+    rapport['nb_positifs'] = len(categories.get('positifs', []))
+    rapport['nb_neutres'] = len(categories.get('neutres', []))
+    rapport['nb_negatifs'] = len(categories.get('negatifs', []))
 
     scores = []
     for categorie in ['positifs', 'neutres', 'negatifs']:
@@ -234,7 +230,7 @@ def generer_rapport_global(categories, problemes):
                 max_val = val
 
         # si dictionnaire vide ou tout à 0, on peut arrêter
-        if max_mot is None or max_val <= 0:
+        if max_mot is None:
             break
 
         problemes_frequent_3.append(max_mot)

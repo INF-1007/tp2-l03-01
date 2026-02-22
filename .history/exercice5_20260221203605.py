@@ -307,12 +307,12 @@ if __name__ == "__main__":
     }
 
     mots_cles_negatifs = {
-        'erreur': -2,
-        'panne': -3,
-        'defaillant': -3,
-        'retard': -1,
-        'surchauffe': -2,
-        'fuite': -3
+        "erreur": -2,
+        "panne": -3,
+        "defaillant": -3,
+        "retard": -1,
+        "surchauffe": -2,
+        "fuite": -3,
     }
 
     # Grande liste de rapports (volontairement variée)
@@ -341,12 +341,12 @@ if __name__ == "__main__":
 
     print("\n=== Catégorisation ===")
     categories = categoriser_rapports(rapports, mots_cles)
-    print("Nb positifs :", len(categories['positifs']))
-    print("Nb neutres  :", len(categories['neutres']))
-    print("Nb negatifs :", len(categories['negatifs']))
+    print("Nb positifs :", len(categories["positifs"]))
+    print("Nb neutres  :", len(categories["neutres"]))
+    print("Nb negatifs :", len(categories["negatifs"]))
 
     print("\n=== Problèmes récurrents (sur négatifs) ===")
-    problemes = identifier_problemes(categories['negatifs'], mots_cles_negatifs)
+    problemes = identifier_problemes(categories["negatifs"], mots_cles_negatifs)
     print(problemes)
 
     print("\n=== Rapport global ===")
@@ -357,4 +357,3 @@ if __name__ == "__main__":
     historique = [3, 4, 4, 5, 6, 6, 7, 7, 8, 8]
     print("Historique :", historique)
     print("Tendance :", calculer_tendance(historique))
-

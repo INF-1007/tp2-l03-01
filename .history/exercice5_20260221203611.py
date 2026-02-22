@@ -346,7 +346,7 @@ if __name__ == "__main__":
     print("Nb negatifs :", len(categories['negatifs']))
 
     print("\n=== Problèmes récurrents (sur négatifs) ===")
-    problemes = identifier_problemes(categories['negatifs'], mots_cles_negatifs)
+    problemes = identifier_problemes(categories["negatifs"], mots_cles_negatifs)
     print(problemes)
 
     print("\n=== Rapport global ===")
@@ -357,4 +357,3 @@ if __name__ == "__main__":
     historique = [3, 4, 4, 5, 6, 6, 7, 7, 8, 8]
     print("Historique :", historique)
     print("Tendance :", calculer_tendance(historique))
-

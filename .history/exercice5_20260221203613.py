@@ -357,4 +357,3 @@ if __name__ == "__main__":
     historique = [3, 4, 4, 5, 6, 6, 7, 7, 8, 8]
     print("Historique :", historique)
     print("Tendance :", calculer_tendance(historique))
-

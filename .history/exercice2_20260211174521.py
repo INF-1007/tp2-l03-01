@@ -27,39 +27,60 @@ Structure d'une intervention (dict) :
 
 def calculer_priorite(intervention):
     """
-    score = (urgence × 2) + (duree × 1) + (critique × 10)
-    """
-    urgence = intervention.get('urgence', 0)
-    duree = intervention.get('duree', 0)
-    critique = intervention.get('critique', False)
+    Calcule la priorité d'une intervention.
 
-    # critique est un bool -> int(True)=1, int(False)=0
-    score = (urgence * 2) + (duree * 1) + (int(critique) * 10)
+    Formule :
+        score de priorité = (urgence × 2) + (duree × 1) + (critique × 10)
+
+    Rappels :
+    - Le booléen critique vaut 1 si True, 0 sinon
+    - Champs manquants → valeur 0 (ou False pour critique)
+
+    Args:
+        intervention (dict)
+
+    Returns:
+        int: score de priorité
+    """
+    score = 0
+
+    # TODO 1 : Récupérer urgence, duree, critique avec .get()
+
+    # TODO 2 : Calculer le score selon la formule
+    #          Penser à convertir critique en 1/0 
+
     return score
 
 
 # -------------------------------------------------------------------
-# 2) Tri des interventions (stable, décroissant, sans sorted/sort)
+# 2) Tri des interventions
 # -------------------------------------------------------------------
 
 def trier_interventions(liste_interventions):
     """
-    Tri par insertion (stable).
+    Trie les interventions par priorité décroissante (plus grand score en premier).
+
+    Contraintes :
+    - Interdit d'utiliser sorted() ou .sort()
+    - Le tri doit être STABLE :
+        si deux interventions ont la même priorité, conserver leur ordre d'origine.
+
+    Suggestion :
+    - Implémenter un tri à bulles ou un tri par insertion.
+
+    Args:
+        liste_interventions (list): liste de dicts
+
+    Returns:
+        list: nouvelle liste triée (idéalement, ne pas modifier l'original)
     """
-    interventions = liste_interventions[:]  # copie
 
-    # Tri par insertion décroissant, stable :
-    # on décale tant que l'élément de gauche a une priorité STRICTEMENT plus petite
-    for i in range(1, len(interventions)):
-        cle = interventions[i]
-        score_cle = calculer_priorite(cle)
+    # TODO 1 : Créer une copie de la liste pour éviter les effets de bord
+    #          Indice : interventions = liste_interventions[:]
 
-        j = i - 1
-        while j >= 0 and calculer_priorite(interventions[j]) < score_cle:
-            interventions[j + 1] = interventions[j]
-            j -= 1
-
-        interventions[j + 1] = cle
+    # TODO 2 : Implémenter un tri stable décroissant
+    # Astuce stabilité :
+    # - si score_i == score_j, NE PAS échanger
 
     return interventions
 
@@ -70,23 +91,27 @@ def trier_interventions(liste_interventions):
 
 def estimer_temps_interventions(liste_triee):
     """
-    1 unité de 'duree' = 4 minutes
+    Estime le temps total et moyen pour traiter les interventions.
+
+    Hypothèse :
+    - Chaque unité de 'duree' correspond à 4 minutes.
+
+    Args:
+        liste_triee (list)
+
+    Returns:
+        dict: {
+            'temps_total': int,
+            'temps_moyen': float
+        }
     """
     temps_stats = {
         'temps_total': 0,
-        'temps_moyen': 0.0
+        'temps_moyen': 0
     }
 
-    if not liste_triee:
-        return temps_stats
-
-    total_minutes = 0
-    for itv in liste_triee:
-        duree = itv.get('duree', 0)
-        total_minutes += duree * 4
-
-    temps_stats['temps_total'] = total_minutes
-    temps_stats['temps_moyen'] = total_minutes / len(liste_triee)
+    # TODO 1 : Calculer le temps total
+    # TODO 2 : Calculer le temps moyen (0 si liste vide)
 
     return temps_stats
 
@@ -96,21 +121,34 @@ def estimer_temps_interventions(liste_triee):
 # -------------------------------------------------------------------
 
 def identifier_interventions_urgentes(liste, seuil=30):
+    """
+    Identifie les interventions dont l'urgence dépasse un seuil.
+
+    Règle :
+    - Une intervention est urgente si intervention['urgence'] > seuil
+    - Si 'urgence' est manquant, considérer 0.
+
+    Args:
+        liste (list): liste d'interventions
+        seuil (int)
+
+    Returns:
+        list: liste des identifiants 'id' urgents
+    """
     urgentes = []
 
-    for itv in liste:
-        urgence = itv.get('urgence', 0)
-        if urgence > seuil:
-            # choix cohérent : si id manquant -> on ignore
-            if 'id' in itv:
-                urgentes.append(itv['id'])
+    # TODO :
+    # Parcourir la liste
+    #   - si urgence > seuil, ajouter l'id.
+    # ⚠️ Si 'id' manquant, tu peux ignorer l'intervention ou ajouter None
+    # (au choix, mais rester cohérent)
 
     return urgentes
-
 
 # -------------------------------------------------------------------
 # TESTS main
 # -------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     interventions_test = [
@@ -133,3 +171,4 @@ if __name__ == "__main__":
 
     urg = identifier_interventions_urgentes(interventions_test, seuil=30)
     print("\nUrgentes :", urg)
+

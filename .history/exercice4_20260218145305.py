@@ -33,7 +33,6 @@ Objectifs :
 # Fonction fournie – NE PAS MODIFIER
 # ------------------------------------------------------------------
 
-
 def afficher_salle(salle):
     print("\n=== Salle d’équipements ===")
     print("   ", end="")
@@ -51,7 +50,6 @@ def afficher_salle(salle):
 # ------------------------------------------------------------------
 # 1) Initialisation de la grille
 # ------------------------------------------------------------------
-
 
 def initialiser_salle(nb_rangees, nb_colonnes, positions_equipements):
     """
@@ -85,7 +83,6 @@ def initialiser_salle(nb_rangees, nb_colonnes, positions_equipements):
         if capacite == 4:
             salle[rangee][colonne] = 'D4'
     return salle
-
 
 # -------------------------------------------------------------------
 # 2) Affection des equipements
@@ -207,14 +204,11 @@ def trouver_meilleur_equipement(salle, taille_equipe):
     #       calculer le score
     #       comparer au meilleur
     for rangee in range(len(salle)):
-        nb_cols = len(salle[0])
-        for colonne in range(nb_cols):
+        for colonne in range(nb_colonnes):
             case = salle[rangee][colonne]
             if case == 'D2' or case == 'D4':
                 capacite = int(case[1])
-                score = calculer_score_equipement(
-                    (rangee, colonne), capacite, taille_equipe, nb_cols
-                )
+                score = calculer_score_equipement((rangee, colonne), capacite, taille_equipe, nb_colonnes)
                 if score != -1:
                     if meilleur is None or score > score_maximal:
                         meilleur = ((rangee, colonne), capacite)
@@ -225,7 +219,6 @@ def trouver_meilleur_equipement(salle, taille_equipe):
 # -------------------------------------------------------------------
 # 5) Generation d'un rapport d'etat
 # -------------------------------------------------------------------
-
 
 def generer_rapport_etat(salle):
     """
@@ -258,7 +251,7 @@ def generer_rapport_etat(salle):
         for case in ligne:
             if case == 'D2':
                 rapport['disponibles_2'] += 1
-                total_equipements += 1
+                total_equipements += 1  
             elif case == 'D4':
                 rapport['disponibles_4'] += 1
                 total_equipements += 1
@@ -285,7 +278,7 @@ def generer_rapport_etat(salle):
         rapport['taux_indisponibilite'] = 0.0
     else:
         rapport['taux_indisponibilite'] = indisponibles / total_equipements
-
+        
     return rapport
 
 # -------------------------------------------------------------------
@@ -300,55 +293,34 @@ if __name__ == "__main__":
     # Mélange d'équipements 2 et 4, répartis dans la salle.
     positions = [
         # Rangée 0
-        (0, 0, 2),
-        (0, 2, 4),
-        (0, 5, 2),
-        (0, 11, 4),
+        (0, 0, 2), (0, 2, 4), (0, 5, 2), (0, 11, 4),
+
         # Rangée 1
-        (1, 1, 4),
-        (1, 4, 2),
-        (1, 7, 4),
-        (1, 10, 2),
+        (1, 1, 4), (1, 4, 2), (1, 7, 4), (1, 10, 2),
+
         # Rangée 2
-        (2, 0, 4),
-        (2, 3, 2),
-        (2, 6, 2),
-        (2, 9, 4),
+        (2, 0, 4), (2, 3, 2), (2, 6, 2), (2, 9, 4),
+
         # Rangée 3
-        (3, 2, 4),
-        (3, 5, 2),
-        (3, 8, 4),
-        (3, 11, 2),
+        (3, 2, 4), (3, 5, 2), (3, 8, 4), (3, 11, 2),
+
         # Rangée 4
-        (4, 1, 2),
-        (4, 4, 4),
-        (4, 7, 2),
-        (4, 10, 4),
+        (4, 1, 2), (4, 4, 4), (4, 7, 2), (4, 10, 4),
+
         # Rangée 5
-        (5, 0, 2),
-        (5, 3, 4),
-        (5, 6, 4),
-        (5, 9, 2),
+        (5, 0, 2), (5, 3, 4), (5, 6, 4), (5, 9, 2),
+
         # Rangée 6
-        (6, 2, 2),
-        (6, 5, 4),
-        (6, 8, 2),
-        (6, 11, 4),
+        (6, 2, 2), (6, 5, 4), (6, 8, 2), (6, 11, 4),
+
         # Rangée 7
-        (7, 1, 4),
-        (7, 4, 2),
-        (7, 7, 4),
-        (7, 10, 2),
+        (7, 1, 4), (7, 4, 2), (7, 7, 4), (7, 10, 2),
+
         # Rangée 8
-        (8, 0, 2),
-        (8, 3, 2),
-        (8, 6, 4),
-        (8, 9, 4),
+        (8, 0, 2), (8, 3, 2), (8, 6, 4), (8, 9, 4),
+
         # Rangée 9
-        (9, 2, 4),
-        (9, 5, 2),
-        (9, 8, 2),
-        (9, 11, 4),
+        (9, 2, 4), (9, 5, 2), (9, 8, 2), (9, 11, 4),
     ]
 
     print("=== PARTIE 1 : Initialisation (grande salle) ===")
@@ -377,18 +349,9 @@ if __name__ == "__main__":
     afficher_salle(salle)
 
     print("\n=== PARTIE 2 : Scores (exemples) ===")
-    print(
-        "Score (0,0) cap 2 équipe 2 :",
-        calculer_score_equipement((0, 0), 2, 2, nb_colonnes),
-    )
-    print(
-        "Score (0,2) cap 4 équipe 3 :",
-        calculer_score_equipement((0, 2), 4, 3, nb_colonnes),
-    )
-    print(
-        "Score (2,3) cap 2 équipe 3 (trop petit) :",
-        calculer_score_equipement((2, 3), 2, 3, nb_colonnes),
-    )
+    print("Score (0,0) cap 2 équipe 2 :", calculer_score_equipement((0, 0), 2, 2, nb_colonnes))
+    print("Score (0,2) cap 4 équipe 3 :", calculer_score_equipement((0, 2), 4, 3, nb_colonnes))
+    print("Score (2,3) cap 2 équipe 3 (trop petit) :", calculer_score_equipement((2, 3), 2, 3, nb_colonnes))
 
     print("\n=== Meilleur équipement disponible ===")
     for taille in [1, 2, 3, 4, 5]:
@@ -406,3 +369,5 @@ if __name__ == "__main__":
     ]
     afficher_salle(mini)
     print("Rapport mini :", generer_rapport_etat(mini))
+
+

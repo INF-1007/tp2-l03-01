@@ -400,9 +400,6 @@ if __name__ == "__main__":
     print(rapport)
 
     print("\n=== Test sur mini-grille (cas simple) ===")
-    mini = [
-        ['D2', 'U2', 'M4', 'X'],
-        ['X',  'D4', 'X',  'U4']
-    ]
+    mini = [["D2", "U2", "M4", "X"], ["X", "D4", "X", "U4"]]
     afficher_salle(mini)
     print("Rapport mini :", generer_rapport_etat(mini))

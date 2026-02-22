@@ -368,11 +368,11 @@ if __name__ == "__main__":
 
     print("\n=== Ajout manuel de maintenances (pour tester le rapport) ===")
     # On force quelques maintenances sur des équipements encore disponibles si possible
-    for (r, c) in [(0, 5), (5, 3), (7, 7)]:
-        if salle[r][c] == 'D2':
-            salle[r][c] = 'M2'
-        elif salle[r][c] == 'D4':
-            salle[r][c] = 'M4'
+    for r, c in [(0, 5), (5, 3), (7, 7)]:
+        if salle[r][c] == "D2":
+            salle[r][c] = "M2"
+        elif salle[r][c] == "D4":
+            salle[r][c] = "M4"
 
     afficher_salle(salle)
 
@@ -400,9 +400,6 @@ if __name__ == "__main__":
     print(rapport)
 
     print("\n=== Test sur mini-grille (cas simple) ===")
-    mini = [
-        ['D2', 'U2', 'M4', 'X'],
-        ['X',  'D4', 'X',  'U4']
-    ]
+    mini = [["D2", "U2", "M4", "X"], ["X", "D4", "X", "U4"]]
     afficher_salle(mini)
     print("Rapport mini :", generer_rapport_etat(mini))

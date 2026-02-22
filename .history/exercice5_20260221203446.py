@@ -211,14 +211,14 @@ def generer_rapport_global(categories, problemes):
     rapport["nb_negatifs"] = len(categories.get("negatifs", []))
 
     scores = []
-    for categorie in ['positifs', 'neutres', 'negatifs']:
+    for categorie in ["positifs", "neutres", "negatifs"]:
         for texte, score in categories.get(categorie):
             scores.append(score)
 
     if len(scores) == 0:
-        rapport['score_moyen'] = 0.0
+        rapport["score_moyen"] = 0.0
     else:
-        rapport['score_moyen'] = sum(scores) / len(scores)
+        rapport["score_moyen"] = sum(scores) / len(scores)
 
     # TODO 2 : trouver les 3 problèmes les plus fréquents sans utiliser sorted(), un tri simple type “sélection des max” est suffisant.)
     problemes_frequent_3 = []
@@ -240,13 +240,14 @@ def generer_rapport_global(categories, problemes):
         problemes_frequent_3.append(max_mot)
         del copie[max_mot]  # enlever pour trouver le prochain
 
-    rapport['top_problemes'] = problemes_frequent_3
+    rapport["top_problemes"] = problemes_frequent_3
     return rapport
 
 
 # -------------------------------------------------------------
 # 5) Calculer une tendance à partir d’un historique
 # -------------------------------------------------------------
+
 
 def calculer_tendance(historique_scores):
     """
@@ -273,7 +274,7 @@ def calculer_tendance(historique_scores):
     # - Couper en deux moitiés
     # - Comparer les moyennes
     if len(historique_scores) <= 1:
-        return 'stable'
+        return "stable"
 
     milieu = len(historique_scores) // 2
     premiere = historique_scores[:milieu]
@@ -283,36 +284,38 @@ def calculer_tendance(historique_scores):
     moy2 = sum(seconde) / len(seconde)
 
     if moy2 > moy1:
-        return 'amelioration'
+        return "amelioration"
     elif moy2 < moy1:
-        return 'degradation'
+        return "degradation"
     else:
-        return 'stable'
+        return "stable"
+
+
 # -------------------------------------------------------------
 # TESTS main
 # -------------------------------------------------------------
 
 if __name__ == "__main__":
     mots_cles = {
-        'stable': 2,
-        'optimal': 3,
-        'nominal': 1,
-        'ok': 1,
-        'erreur': -2,
-        'panne': -3,
-        'defaillant': -3,
-        'retard': -1,
-        'surchauffe': -2,
-        'fuite': -3
+        "stable": 2,
+        "optimal": 3,
+        "nominal": 1,
+        "ok": 1,
+        "erreur": -2,
+        "panne": -3,
+        "defaillant": -3,
+        "retard": -1,
+        "surchauffe": -2,
+        "fuite": -3,
     }
 
     mots_cles_negatifs = {
-        'erreur': -2,
-        'panne': -3,
-        'defaillant': -3,
-        'retard': -1,
-        'surchauffe': -2,
-        'fuite': -3
+        "erreur": -2,
+        "panne": -3,
+        "defaillant": -3,
+        "retard": -1,
+        "surchauffe": -2,
+        "fuite": -3,
     }
 
     # Grande liste de rapports (volontairement variée)
@@ -341,12 +344,12 @@ if __name__ == "__main__":
 
     print("\n=== Catégorisation ===")
     categories = categoriser_rapports(rapports, mots_cles)
-    print("Nb positifs :", len(categories['positifs']))
-    print("Nb neutres  :", len(categories['neutres']))
-    print("Nb negatifs :", len(categories['negatifs']))
+    print("Nb positifs :", len(categories["positifs"]))
+    print("Nb neutres  :", len(categories["neutres"]))
+    print("Nb negatifs :", len(categories["negatifs"]))
 
     print("\n=== Problèmes récurrents (sur négatifs) ===")
-    problemes = identifier_problemes(categories['negatifs'], mots_cles_negatifs)
+    problemes = identifier_problemes(categories["negatifs"], mots_cles_negatifs)
     print(problemes)
 
     print("\n=== Rapport global ===")
@@ -357,4 +360,3 @@ if __name__ == "__main__":
     historique = [3, 4, 4, 5, 6, 6, 7, 7, 8, 8]
     print("Historique :", historique)
     print("Tendance :", calculer_tendance(historique))
-

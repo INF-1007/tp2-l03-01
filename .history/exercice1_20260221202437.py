@@ -1,21 +1,3 @@
-"""
-TP2 – Exercice 1 : Analyse des modules de la station spatiale ORBIT-X
-
-Objectif :
-Analyser les modules de la station afin d'extraire des statistiques utiles
-pour la planification de la maintenance.
-
-Un module est représenté par :
-    nom_module : (cout_maintenance, temps_intervention, criticite)
-
-Exemple :
-modules = {
-    'Laboratoire': (120, 15, 8),
-    'Habitat': (200, 10, 9),
-    'Observatoire': (150, 20, 6)
-}
-"""
-
 # -------------------------------------------------------------------
 # 1) Analyse des modules
 # -------------------------------------------------------------------
